@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat.io</title>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <form id="chat">
+        <input type="text" name="username" placeholder="Digite seu usuario">
+        <div class="messages"></div>
+        <input type="text" name="message" placeholder="Digite sua mensgaem">
+        <button type="submit">Enviar</button>
+    </form>
+
+    <script type="text/javascript">
+        //recebe o id do socket conectado e joga para o outro arquivo js
+        var socket = io('http://localhost:3000');
+
+        //renderizar mensgaens
+        function renderMessage(message) {
+            $('.messages').append(
+                `<div class="message"><strong>${message.author}</strong>: ${message.message}</div>`
+                )
+        }
+
+        //recebendo array do server.js
+        socket.on('previousMessages', function(message) {
+            for (message of message) {
+                renderMessage(message)
+            }
+        })
+
+        //recebendo historico de mensagens enviado pelo server.js
+        socket.on('receivedMessage', message => {
+            //chamando render de mensagens e passando o historico
+            renderMessage(message)
+        })
+
+        //indentificar ação de submit no formulairo
+        $('#chat').submit(function(event) {
+            //remover ação de submit do formulario
+            event.preventDefault();
+
+            //indentificando inpts pelo nome
+            var author = $(`input[name=username]`).val();
+            var message = $(`input[name=message]`).val();
+
+            //indenfificando se há mensagem e nome do autor
+            if(author.length && message.length) {
+                //atribuindo valores a um objeto
+                var messageObject = {
+                    author: author,
+                    message: message
+                };
+                //chamando renderizador de mensagens e passando o objeto
+                renderMessage(messageObject)
+                
+                //emitindo objeto para fora do arquivo
+                socket.emit('sendMessage', messageObject);
+            }
+        })
+    </script>
+</body>
+</html>
