@@ -18,5 +18,13 @@
     "express",
     "socket.io",
     "ejs"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/npcwalison/chat.io.git"
+  },
+  "bugs": {
+    "url": "https://github.com/npcwalison/chat.io/issues"
+  },
+  "homepage": "https://github.com/npcwalison/chat.io#readme"
 }
